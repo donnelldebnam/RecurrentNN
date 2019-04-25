@@ -24,10 +24,6 @@ public class NN {
         nn.add(input);
     }
 
-    int size() {
-        return size;
-    }
-
     /* Appends new layer to end of Network (LList). */
     void append(Layer layer) {
         nn.add(layer);
@@ -56,24 +52,21 @@ public class NN {
 
     public static void main(String[] args) {
 
-        /* Network with 4 input neurons */
+        /* Network with 25 input neurons */
         NN network = new NN(25);
 
         /* Number of Hidden Layers. */
         final int HIDDEN_LAYERS = 3;
 
-        /* This maps pairs of layers to a weight matrix. */
+        /* Maps pairs of layers to a weight matrix. */
         HashMap<ArrayList<Layer>, Matrix> map = new HashMap<>();
 
-        /* Add (3) new layers to the Network. */
-        for (int i = 0; i < HIDDEN_LAYERS; i++) {
-            HiddenLayer layer = new HiddenLayer(3); // 3 neurons in each layer
-            network.append(layer);
-        }
-
+        /* Add (3) new HiddenLayers to the Network. */
+        for (int i = 0; i < HIDDEN_LAYERS; i++) 
+            network.append(new HiddenLayer(3));
+        
         /* Add Output Layer. */
-        OutputLayer output = new OutputLayer();
-        network.append(output);
+        network.append(new OutputLayer());
 
         /* Give each pair of parallel Layers a matrix. */
         int count = 0;
@@ -90,11 +83,10 @@ public class NN {
             }
             l.add(layer_i);
             l.add(layer_j);
-            Matrix m = new Matrix(layer_i, layer_j);
-            map.put(l, m);
+            map.put(l, new Matrix(layer_i, layer_j));
         }
 
-        /* Input Matrix for Letter A. */
+        /* Input Matrix for Letter A */
         float[][] letterA = { 
                 { 0, 1, 1, 1, 0 },
                 { 0, 1, 0, 1, 0 },
@@ -102,7 +94,7 @@ public class NN {
                 { 0, 1, 0, 1, 0 },
                 { 0, 1, 0, 1, 0 } };
 
-        /* Input Matrix for Letter Z. */
+        /* Input Matrix for Letter Z */
         float[][] letterZ = { 
                 { 1, 1, 1, 1, 1 },
                 { 0, 0, 0, 1, 0 },

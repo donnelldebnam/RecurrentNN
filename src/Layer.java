@@ -18,9 +18,5 @@ public class Layer {
         this.neurons = neurons;
         activations = new float[neurons];
     }
-
-    // Set/change the number of neurons in layer.
-    void setNeurons(int neurons) {
-        this.neurons = neurons;
-    }
+    
 }
