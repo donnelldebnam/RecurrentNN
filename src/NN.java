@@ -17,11 +17,13 @@ public class NN {
     public OutputLayer output;
 
     public int size = 0;
+    public float[][] pattern;
 
     /* Custom Constructor for NeuralNetwork. */
     public NN(int inputNeurons) {
         input = new InputLayer(inputNeurons);
         nn.add(input);
+        size++;
     }
 
     /* Appends new layer to end of Network (LList). */
@@ -50,13 +52,25 @@ public class NN {
         return product;
     }
 
-    public static void main(String[] args) {
+    /* Sets pattern to the Network training ground. */
+    void setPattern(float[][] pattern) {
+        this.pattern = pattern;
+    }
+
+    /* Imports pattern to training ground. */
+    float[][] importPattern() {
+        return pattern;
+    }
+
+    /* Entire feedforward algorithm. */
+    void feedForward(int hiddenLayers, float[][] p) {
 
         /* Network with 25 input neurons */
-        NN network = new NN(25);
+        int s = p.length *  p[1].length;
+        NN network = new NN(s);
 
         /* Number of Hidden Layers. */
-        final int HIDDEN_LAYERS = 3;
+        final int HIDDEN_LAYERS = hiddenLayers;
 
         /* Maps pairs of layers to a weight matrix. */
         HashMap<ArrayList<Layer>, Matrix> map = new HashMap<>();
@@ -86,54 +100,41 @@ public class NN {
             map.put(l, new Matrix(layer_i, layer_j));
         }
 
-        /* Input Matrix for Letter A */
-        float[][] letterA = { 
-                { 0, 1, 1, 1, 0 },
-                { 0, 1, 0, 1, 0 },
-                { 0, 1, 1, 1, 0 },
-                { 0, 1, 0, 1, 0 },
-                { 0, 1, 0, 1, 0 } };
+        /* Input Matrix for unique pattern */
+        network.setPattern(p);
+        float[][] MY_PATTERN = network.importPattern();
 
-        /* Input Matrix for Letter Z */
-        float[][] letterZ = { 
-                { 1, 1, 1, 1, 1 },
-                { 0, 0, 0, 1, 0 },
-                { 0, 0, 1, 0, 0 },
-                { 0, 1, 0, 0, 0 },
-                { 1, 1, 1, 1, 1 } };
+        Matrix pattern = new Matrix(); // Create new Matrix for pattern
+        pattern.matrix = MY_PATTERN; // Set matrix to new pattern
 
-        Matrix A = new Matrix(); // Create new Matrix for letter A
-        A.matrix = letterA; // Set matrix to 'A' pattern
-
-        A.Flatten(); // Flatten Matrix to 1D
-        network.input.vector = A; // Set 'A' pattern to input layer.
+        pattern.Flatten(); // Flatten Matrix to 1D
+        network.input.vector = pattern; // Set pattern to input layer.
 
         /* Copy letterA pattern to input layer. */
         for (int i = 0; i < network.input.neurons; i++) 
-            network.input.activations[i] = A.matrix[i][0];
-        
-        // Set HiddenLayer(1) activations!
-        Matrix input_to_firsthidden = new Matrix(network.input, network.nn.get(1));
-        float[] hidden1_activations = network.multiply(network.input.activations, input_to_firsthidden.matrix);
-        network.nn.get(1).activations = hidden1_activations;
+            network.input.activations[i] = pattern.matrix[i][0];
+    
+            /**
+             * Here, we actually feedforward through the network. Layers are interconnected through the
+             * NN's LinkedList structure, in which each layer of activations and weight matrices
+             * are multipled and passed along. Finally, the activatios of our output layers are printed.
+             */
 
-        // Set HiddenLayer(2) activations!
-        Matrix input_to_secondhidden = new Matrix(network.nn.get(1), network.nn.get(2));
-        float[] hidden2_activations = network.multiply(hidden1_activations, input_to_secondhidden.matrix);
-        network.nn.get(2).activations = hidden2_activations;
+        Matrix weightMatrix;            // Dynamic weight matrix from layer-to-layer
+        float[] nextLayerActivations;   // Dynamic activations from layer-to-layer
 
-        // Set HiddenLayer(3) activations!
-        Matrix input_to_thirdhidden = new Matrix(network.nn.get(2), network.nn.get(3));
-        float[] hidden3_activations = network.multiply(hidden2_activations, input_to_thirdhidden.matrix);    
-        network.nn.get(3).activations = hidden3_activations; 
-        
-        // Get Outputs!
-        Matrix lasthidden_to_output = new Matrix(network.nn.get(3), network.nn.get(4));
-        float[] output_activations = network.multiply(hidden3_activations, lasthidden_to_output.matrix);
-        network.nn.get(4).activations = output_activations;
+        // Feed forward through the network.
+        for (int i = 0; i < network.size-1; i++) {
+            weightMatrix = new Matrix(network.nn.get(i), network.nn.get(i + 1));
+            if (i == 0) 
+                nextLayerActivations = network.multiply(network.input.activations, weightMatrix.matrix);
+            else 
+                nextLayerActivations = network.multiply(network.nn.get(i).activations, weightMatrix.matrix);
+            network.nn.get(i+1).activations = nextLayerActivations;
+        }
 
         // Print output neurons
-        for (float a : output_activations)
+        for (float a : network.nn.get(network.size-1).activations)
             System.out.println(a);
 
     }
