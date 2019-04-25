@@ -42,7 +42,6 @@ public class NN {
     /* Returns products of activations times a weight matrix. */
     float[] multiply(float[] activations, float[][] weights) {
         float[] product = new float[weights[1].length];
-
         for (int i = 0; i < weights[1].length; i++) {
             float sum = 0;
             int count = 0;
@@ -53,7 +52,6 @@ public class NN {
             product[i] = (float) sigmoid(sum);
         }
         return product;
-
     }
 
     public static void main(String[] args) {
@@ -67,9 +65,9 @@ public class NN {
         /* This maps pairs of layers to a weight matrix. */
         HashMap<ArrayList<Layer>, Matrix> map = new HashMap<>();
 
-        /* Add (5) new layers to the Network. */
+        /* Add (3) new layers to the Network. */
         for (int i = 0; i < HIDDEN_LAYERS; i++) {
-            HiddenLayer layer = new HiddenLayer(10);
+            HiddenLayer layer = new HiddenLayer(3); // 3 neurons in each layer
             network.append(layer);
         }
 
@@ -118,21 +116,34 @@ public class NN {
         A.Flatten(); // Flatten Matrix to 1D
         network.input.vector = A; // Set 'A' pattern to input layer.
 
-        /* Copy letterA pattern to . */
+        /* Copy letterA pattern to input layer. */
         for (int i = 0; i < network.input.neurons; i++) 
             network.input.activations[i] = A.matrix[i][0];
         
-        // Multiply input layer by Input to Hidden 1 weights.
+        // Set HiddenLayer(1) activations!
         Matrix input_to_firsthidden = new Matrix(network.input, network.nn.get(1));
         float[] hidden1_activations = network.multiply(network.input.activations, input_to_firsthidden.matrix);
-
-        // Set HiddenLayer(1) activations!
         network.nn.get(1).activations = hidden1_activations;
 
-        
-        
+        // Set HiddenLayer(2) activations!
+        Matrix input_to_secondhidden = new Matrix(network.nn.get(1), network.nn.get(2));
+        float[] hidden2_activations = network.multiply(hidden1_activations, input_to_secondhidden.matrix);
+        network.nn.get(2).activations = hidden2_activations;
 
+        // Set HiddenLayer(3) activations!
+        Matrix input_to_thirdhidden = new Matrix(network.nn.get(2), network.nn.get(3));
+        float[] hidden3_activations = network.multiply(hidden2_activations, input_to_thirdhidden.matrix);    
+        network.nn.get(3).activations = hidden3_activations; 
         
+        // Get Outputs!
+        Matrix lasthidden_to_output = new Matrix(network.nn.get(3), network.nn.get(4));
+        float[] output_activations = network.multiply(hidden3_activations, lasthidden_to_output.matrix);
+        network.nn.get(4).activations = output_activations;
+
+        // Print output neurons
+        for (float a : output_activations)
+            System.out.println(a);
+
     }
 
 }
