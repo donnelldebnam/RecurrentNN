@@ -26,14 +26,14 @@ public class NN {
         size++;
     }
 
-    /* Appends new layer to end of Network (LList). */
+    /* Adds new layer to end of Network (LList). */
     void append(Layer layer) {
         nn.add(layer);
         size++;
     }
 
     /* Returns value crunched through sigmoid function */
-    static double sigmoid(float x) {
+    double sigmoid(float x) {
         return 1 / (1 + Math.exp(-x));
     }
 
@@ -110,14 +110,14 @@ public class NN {
         pattern.Flatten(); // Flatten Matrix to 1D
         network.input.vector = pattern; // Set pattern to input layer.
 
-        /* Copy letterA pattern to input layer. */
+        /* Copy pattern to 1D input layer. */
         for (int i = 0; i < network.input.neurons; i++) 
             network.input.activations[i] = pattern.matrix[i][0];
     
             /**
              * Here, we actually feedforward through the network. Layers are interconnected through the
              * NN's LinkedList structure, in which each layer of activations and weight matrices
-             * are multipled and passed along. Finally, the activatios of our output layers are printed.
+             * are multipled and passed along. Finally, the activations of our output layers are printed.
              */
 
         Matrix weightMatrix;            // Dynamic weight matrix from layer-to-layer
@@ -134,9 +134,15 @@ public class NN {
         }
 
         // Print output neurons
-        for (float a : network.nn.get(network.size-1).activations)
-            System.out.println(a);
+        for (float o : network.nn.get(network.size-1).activations)
+            System.out.println(o);
 
+    }
+
+    /* BackPropogate through the network. */
+    public void Backpropage() {
+        // Backpropogation Algorithm
+        // This algorithm will be combined with FeedForward to create a 'Train' algorithm.
     }
 
 }
