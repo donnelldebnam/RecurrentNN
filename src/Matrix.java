@@ -37,8 +37,20 @@ public class Matrix {
         this.matrix = flat;
     }
 
+    /* Rotates matrix for backpropagation. */
+    static float[][] rotate(Matrix m) {
+        int len = m.matrix.length, width = m.matrix[1].length;
+        float[][] rotated = new float[width][len];
+        for (int i = 0; i < len; i++)
+            for (int j = 0; j < width; j++)
+                rotated[j][i] = m.matrix[i][j];
+        return rotated;
+    }
+
     @Override
     public String toString() {
+        if (matrix.length == 0 && matrix[1].length == 0)
+            return "[]";
         String str = "[";
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[1].length; j++) {
