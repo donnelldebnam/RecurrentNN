@@ -16,25 +16,35 @@ public class NN {
     public int size = 0;
     public float[][] pattern;
 
-    /* Custom Constructor for NeuralNetwork. */
+    /* NeuralNet Builder */
     public NN(int inputNeurons) {
         input = new InputLayer(inputNeurons);
         nn.add(input);
         size++;
     }
 
-    /* Adds new layer to NN. */
+    /** 
+     * @param layer new layer to be added to NeuralNetl
+     */
     private void append(Layer layer) {
         nn.add(layer);
         size++;
     }
 
-    /* Returns value crunched through sigmoid function */
+    /** 
+     * @param x any numeric value [activation]
+     * @return 'x' value crunched through sigmoid function 
+     */
     public double sigmoid(float x) {
         return 1 / (1 + Math.exp(-x));
     }
 
-    /* Multiplies a vector by a weight matrix */
+    /**
+     * @param activations   activations of neurons in layer(i)
+     * @param weights   weight matrix of layer(i) and layer(j)
+     * 
+     * @return  products of given vector and weight matrix
+     */
     private float[] multiply(float[] activations, float[][] weights) {
         float[] product = new float[weights[1].length];
         for (int i = 0; i < weights[1].length; i++) {
@@ -49,20 +59,32 @@ public class NN {
         return product;
     }
 
-    /* Sets pattern to the Network training ground. */
+    /** 
+     * @param pattern input pattern to be set to the nn training ground
+     */
     private void setPattern(float[][] pattern) {
         this.pattern = pattern;
     }
 
-    /* Imports pattern to training ground. */
+    /** 
+     * @return pattern attribute of matrix that is being used 
+     *         to train the network. 
+     */
     private float[][] importPattern() {
         return pattern;
     }
 
-    /* Entire feedforward algorithm. */
+    /** 
+     * Entire training algorithm that takes in an input pattern and through multiple
+     * layers of the network, feeds forward and backpropagates to correct errors in
+     * each weight matrix.
+     * 
+     * @param hiddenLayers  number of hidden layers used to train the network
+     * @param p input pattern that will be trained by the network
+     */
     public void Train(int hiddenLayers, float[][] p) {
 
-        /* Network with 25 input neurons */
+        /* Network with L x W input neurons */
         int s = p.length *  p[1].length;
         NN network = new NN(s);
 
@@ -72,7 +94,7 @@ public class NN {
         /* Maps pairs of layers to a weight matrix. */
         HashMap<HashSet<Layer>, Matrix> map = new HashMap<>();
 
-        /* Add (3) new HiddenLayers to the Network. */
+        /* Add n new HiddenLayers to the Network. */
         for (int i = 0; i < HIDDEN_LAYERS; i++) 
             network.append(new HiddenLayer(3)); // 3 neurons in each layer
         
@@ -123,6 +145,11 @@ public class NN {
             network.nn.get(i+1).activations = nextLayerActivations;
         }
 
+        // Print ouput neuron activations for this tarining example
+        System.out.println("Output neuron 1: " + network.nn.get(network.size-1).activations[0]);
+        System.out.println("Output neuron 2: " + network.nn.get(network.size-1).activations[1]);
+        System.out.println();
+
             /** 
              * We now backpropagate through the network and update weights for each
              * set of parallel layers. The final hiddenlayer-to-outputlayer matrix will
@@ -138,10 +165,10 @@ public class NN {
             // Get matrix from output to last hidden layer
             HashSet<Layer> set = new HashSet<>(Arrays.asList(
                                     network.nn.get(k), network.nn.get(k+1)));
-            Matrix weights = new Matrix();
 
-            // Retreive weight matrix for the 2 parallel layers.
-            weights = map.get(set);
+            // Retreive weight matrix for the 2 parallel layers
+            // WM is rotated so that the FROM vertices are now the TO vertices; vice versa
+            Matrix weights = map.get(set);
             weights.matrix = Matrix.rotate(weights);
 
             System.out.println("Original Hidden to Output Layer Matrix \n\n" + weights);
@@ -151,14 +178,14 @@ public class NN {
 
                 for (int j = 0; j < weights.matrix[1].length; j++) {
                     
-                    float w = weights.matrix[i][j]; // weight we are adjusting
+                    float w = weights.matrix[i][j];                         // Weight we are adjusting
 
                     // Attributes to calculate Delta of Weight w
                     float x = (network.nn.get(i+1)).activations[i];         // Neuron from previous layer (i+1 because of reverse)
                     float target = Math.round(Math.random());               // Random "target" output (0 or 1)
                     float out = network.nn.get(i).activations[i];           // Actual output neuron activation
 
-                    float Δw = (x) * (out - target) * (out) * (out - 1);    // Delta (Rate of Change/Variation)
+                    float Δw = (x) * (out - target) * (out) * (out - 1);    // Calculate Delta
                     weights.matrix[i][j] = w + Δw;                          // New weight
                 }
             }
