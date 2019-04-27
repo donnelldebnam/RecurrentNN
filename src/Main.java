@@ -7,6 +7,10 @@ public class Main {
 
     public static void main(String[] args) {
         
+        // Dimensions of the patterns (5x5 Grid)
+        final int patternHeight = 5;
+        final int patternWidth = 5;
+
         // Blank Input
         float[][] input_pattern0 = { 
                 { 0, 0, 0, 0, 0 }, 
@@ -31,11 +35,15 @@ public class Main {
                 { 0, 1, 0, 0, 0 },
                 { 1, 1, 1, 1, 1 } };
 
-        int input_size = input_pattern1.length * input_pattern1[1].length;
 
-        NN NeuralNetwork = new NN(input_size);
+        // New Neural Network size 25.
+        NN NeuralNetwork = new NN(patternHeight * patternWidth);
         
-        NeuralNetwork.feedForward(4, input_pattern1);
+        // Train each pattern
+        NeuralNetwork.Train(4, input_pattern0);
+        NeuralNetwork.Train(4, input_pattern1);
+        NeuralNetwork.Train(4, input_pattern2);
 
     }
+    
 }

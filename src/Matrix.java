@@ -12,9 +12,7 @@ public class Matrix {
      */
     public float[][] matrix;
 
-    public Matrix() {
-
-    }
+    public Matrix() {}
 
     // Matrix Builder
     public Matrix(Layer L0, Layer L1) {

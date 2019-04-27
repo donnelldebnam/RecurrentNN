@@ -3,12 +3,7 @@
  * @author Donnell R. Debnam Jr
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Arrays;
-import java.util.Collections;
-
+import java.util.*;
 
 public class NN {
 
@@ -28,19 +23,19 @@ public class NN {
         size++;
     }
 
-    /* Adds new layer to end of Network (LList). */
-    void append(Layer layer) {
+    /* Adds new layer to NN. */
+    private void append(Layer layer) {
         nn.add(layer);
         size++;
     }
 
     /* Returns value crunched through sigmoid function */
-    double sigmoid(float x) {
+    public double sigmoid(float x) {
         return 1 / (1 + Math.exp(-x));
     }
 
-    /* Returns products of activations times a weight matrix. */
-    float[] multiply(float[] activations, float[][] weights) {
+    /* Multiplies a vector by a weight matrix */
+    private float[] multiply(float[] activations, float[][] weights) {
         float[] product = new float[weights[1].length];
         for (int i = 0; i < weights[1].length; i++) {
             float sum = 0;
@@ -55,17 +50,17 @@ public class NN {
     }
 
     /* Sets pattern to the Network training ground. */
-    void setPattern(float[][] pattern) {
+    private void setPattern(float[][] pattern) {
         this.pattern = pattern;
     }
 
     /* Imports pattern to training ground. */
-    float[][] importPattern() {
+    private float[][] importPattern() {
         return pattern;
     }
 
     /* Entire feedforward algorithm. */
-    void feedForward(int hiddenLayers, float[][] p) {
+    public void Train(int hiddenLayers, float[][] p) {
 
         /* Network with 25 input neurons */
         int s = p.length *  p[1].length;
@@ -132,11 +127,12 @@ public class NN {
              * We now backpropagate through the network and update weights for each
              * set of parallel layers. The final hiddenlayer-to-outputlayer matrix will
              * be scored differently with respect to targetted outputs of that layer.
-            */
+             */
 
         // Reverse Layers of Network
         Collections.reverse(network.nn);
         
+        /* Go through each set of parallel layers and update matrices. */
         for (int k = 0; k < /*network.nn.size()-*/1; k++) {
 
             // Get matrix from output to last hidden layer
@@ -158,20 +154,17 @@ public class NN {
                     float w = weights.matrix[i][j]; // weight we are adjusting
 
                     // Attributes to calculate Delta of Weight w
-                    float x = (network.nn.get(i+1)).activations[i];     // Neuron from previous layer (i+1 because of reverse)
-                    float target = Math.round(Math.random());           // Random "target" output (0 or 1)
-                    float out = network.nn.get(i).activations[i];       // Actual output neuron
+                    float x = (network.nn.get(i+1)).activations[i];         // Neuron from previous layer (i+1 because of reverse)
+                    float target = Math.round(Math.random());               // Random "target" output (0 or 1)
+                    float out = network.nn.get(i).activations[i];           // Actual output neuron activation
 
-                    float Δ = (x) * (out - target) * (out) * (out - 1); // Delta (Rate of Change/Variation)
-                    weights.matrix[i][j] = w + Δ;                       // New weight
+                    float Δw = (x) * (out - target) * (out) * (out - 1);    // Delta (Rate of Change/Variation)
+                    weights.matrix[i][j] = w + Δw;                          // New weight
                 }
             }
             System.out.println("\nAfter Gradient Descent:\n\n" + weights);
 
         }
-
-
-
 
     }
 
