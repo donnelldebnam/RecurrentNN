@@ -36,7 +36,7 @@ public class Main {
                 { 1, 1, 1, 1, 1 } };
 
 
-        // New Neural Network size 25.
+        // New Neural Network; input size of pattern L x W.
         NN NeuralNetwork = new NN(patternHeight * patternWidth);
         
         // Train each pattern

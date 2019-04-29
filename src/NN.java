@@ -24,7 +24,7 @@ public class NN {
     }
 
     /** 
-     * @param layer new layer to be added to NeuralNetl
+     * @param layer new layer to be added to NeuralNet
      */
     private void append(Layer layer) {
         nn.add(layer);
@@ -145,7 +145,7 @@ public class NN {
             network.nn.get(i+1).activations = nextLayerActivations;
         }
 
-        // Print ouput neuron activations for this tarining example
+        // Print ouput neuron activations for this training example
         System.out.println("Output neuron 1: " + network.nn.get(network.size-1).activations[0]);
         System.out.println("Output neuron 2: " + network.nn.get(network.size-1).activations[1]);
         System.out.println();
@@ -160,7 +160,7 @@ public class NN {
         Collections.reverse(network.nn);
         
         /* Go through each set of parallel layers and update matrices. */
-        for (int k = 0; k < /*network.nn.size()-*/1; k++) {
+        for (int k = 0; k < network.nn.size()-1; k++) {
 
             // Get matrix from output to last hidden layer
             HashSet<Layer> set = new HashSet<>(Arrays.asList(

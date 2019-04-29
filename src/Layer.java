@@ -5,9 +5,8 @@
 
 public class Layer {
 
-    // Number of neurons in this layer.
-    public int neurons = 0;
-    public float[] activations;
+    public int neurons = 0;     // size of layer
+    public float[] activations; // array of activations (neurons)
 
     // Default Constructor
     public Layer() {
