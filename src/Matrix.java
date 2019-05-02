@@ -66,6 +66,23 @@ public class Matrix {
     }
 
     /**
+     * @param a first matrix
+     * @param b second matrix
+     * 
+     * @return product of given matrices
+     */
+    public static Matrix multiply(Matrix a, Matrix b) {
+        Matrix results = new Matrix();
+        float[][] a_values = a.matrix, b_values = b.matrix;
+        float[][] results_values = new float[a_values.length][a_values[1].length];
+        for (int i = 0; i < a_values.length; i++)
+            for (int j = 0; j < a_values[1].length; j++)
+                results_values[i][j] = a_values[i][j] * b_values[i][j];
+        results.matrix = results_values;
+        return results;
+    }
+
+    /**
      * @param a Matrix a
      * @param b Matrix b
      * @return  result of a - b.
