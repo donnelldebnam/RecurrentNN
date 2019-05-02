@@ -35,14 +35,65 @@ public class Matrix {
         this.matrix = flat;
     }
 
-    /* Rotates matrix for backpropagation. */
-    static float[][] rotate(Matrix m) {
+    // Returns a Matrix object from an array object
+    public static Matrix fromArray(float[] data) {
+        Matrix m = new Matrix();
+        float[][] values = new float[data.length][1];
+        for (int i = 0; i < data.length; i++) 
+            values[i][0] = data[i];
+        m.matrix = values;
+        return m;
+    }
+
+    /**
+     * @param activations activations of neurons in layer(i)
+     * @param weights     weight matrix of layer(i) and layer(j)
+     * 
+     * @return products of given vector and weight matrix
+     */
+    public static float[] multiply(float[] activations, float[][] weights) {
+        float[] product = new float[weights[1].length];
+        for (int i = 0; i < weights[1].length; i++) {
+            float sum = 0;
+            int Iterator = 0;
+            for (float a : activations) {
+                sum += (a * weights[Iterator][i]);
+                Iterator++;
+            }
+            product[i] = (float) NN.sigmoid(sum);
+        }
+        return product;
+    }
+
+    /**
+     * @param a Matrix a
+     * @param b Matrix b
+     * @return  result of a - b.
+     */
+    public static Matrix subtract(Matrix a, Matrix b) {
+        Matrix results = new Matrix();
+        float[][] a_values = a.matrix, b_values = b.matrix;
+        float[][] results_values = new float[a_values.length][a_values[1].length];
+        for (int i = 0; i < a_values.length; i++) 
+            for (int j = 0; j < a_values[1].length; j++) 
+                results_values[i][j] = a_values[i][j] - b_values[i][j];
+        results.matrix = results_values;
+        return results;
+    } 
+
+    /**
+     * @param m matrix that will be transposed.
+     * @return the transposition of original matrix.
+     */
+    static Matrix transpose(Matrix m) {
+        Matrix result = new Matrix();
         int len = m.matrix.length, width = m.matrix[1].length;
-        float[][] rotated = new float[width][len];
+        float[][] transposed = new float[width][len];
         for (int i = 0; i < len; i++)
             for (int j = 0; j < width; j++)
-                rotated[j][i] = m.matrix[i][j];
-        return rotated;
+                transposed[j][i] = m.matrix[i][j];
+        result.matrix = transposed;
+        return result;
     }
 
     @Override

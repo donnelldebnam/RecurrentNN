@@ -35,28 +35,8 @@ public class NN {
      * @param x any numeric value [activation]
      * @return 'x' value crunched through sigmoid function 
      */
-    public double sigmoid(float x) {
+    public static double sigmoid(float x) {
         return 1 / (1 + Math.exp(-x));
-    }
-
-    /**
-     * @param activations   activations of neurons in layer(i)
-     * @param weights   weight matrix of layer(i) and layer(j)
-     * 
-     * @return  products of given vector and weight matrix
-     */
-    private float[] multiply(float[] activations, float[][] weights) {
-        float[] product = new float[weights[1].length];
-        for (int i = 0; i < weights[1].length; i++) {
-            float sum = 0;
-            int Iterator = 0;
-            for (float a : activations) {
-                sum += (a * weights[Iterator][i]);
-                Iterator++;
-            }
-            product[i] = (float) sigmoid(sum);
-        }
-        return product;
     }
 
     /** 
@@ -82,7 +62,7 @@ public class NN {
      * @param hiddenLayers  number of hidden layers used to train the network
      * @param p input pattern that will be trained by the network
      */
-    public void Train(int hiddenLayers, float[][] p) {
+    public void Train(int hiddenLayers, float[][] p, float[] targets) {
 
         /* Network with L x W input neurons */
         int s = p.length *  p[1].length;
@@ -139,9 +119,9 @@ public class NN {
         for (int i = 0; i < network.size-1; i++) {
             weightMatrix = new Matrix(network.nn.get(i), network.nn.get(i+1));
             if (i == 0) 
-                nextLayerActivations = network.multiply(network.input.activations, weightMatrix.matrix);
+                nextLayerActivations = Matrix.multiply(network.input.activations, weightMatrix.matrix);
             else 
-                nextLayerActivations = network.multiply(network.nn.get(i).activations, weightMatrix.matrix);
+                nextLayerActivations = Matrix.multiply(network.nn.get(i).activations, weightMatrix.matrix);
             network.nn.get(i+1).activations = nextLayerActivations;
         }
 
@@ -159,7 +139,25 @@ public class NN {
         // Reverse Layers of Network
         Collections.reverse(network.nn);
         
-        /* Go through each set of parallel layers and update matrices. */
+        // Convert actual & target arrays to matrices.
+        Matrix output_vector = Matrix.fromArray(network.nn.get(0).activations);
+        Matrix target_vector = Matrix.fromArray(targets);
+
+        // Calculate errors from last hidden to output layer.
+        Matrix output_errors = Matrix.subtract(target_vector, output_vector);
+
+        // Get weight matrix from these layers.
+        HashSet<Layer> set = new HashSet<>(Arrays.asList(
+                            network.nn.get(0), network.nn.get(1)));
+        Matrix who = map.get(set);  // weights (w) from hidden (h) to output (o)
+
+        // Calculate hidden errors
+        float[] he = Matrix.multiply(output_errors.matrix[0], Matrix.transpose(who).matrix);
+        Matrix hidden_errors = Matrix.fromArray(he);
+
+        System.out.println(hidden_errors);
+        
+        /* Go through each set of parallel layers and update matrices. 
         for (int k = 0; k < network.nn.size()-1; k++) {
 
             // Get matrix from output to last hidden layer
@@ -191,7 +189,7 @@ public class NN {
             }
             System.out.println("\nAfter Gradient Descent:\n\n" + weights);
 
-        }
+        }*/
 
     }
 

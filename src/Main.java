@@ -40,9 +40,9 @@ public class Main {
         NN NeuralNetwork = new NN(patternHeight * patternWidth);
         
         // Train each pattern
-        NeuralNetwork.Train(4, input_pattern0);
-        NeuralNetwork.Train(4, input_pattern1);
-        NeuralNetwork.Train(4, input_pattern2);
+        NeuralNetwork.Train(4, input_pattern0, new float[] { 0, 0 });
+        NeuralNetwork.Train(4, input_pattern1, new float[] { 1, 0 });
+        NeuralNetwork.Train(4, input_pattern2, new float[] { 0, 1 });
 
     }
     
