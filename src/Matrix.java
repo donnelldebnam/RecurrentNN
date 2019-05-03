@@ -74,11 +74,13 @@ public class Matrix {
     public static Matrix multiply(Matrix a, Matrix b) {
         Matrix results = new Matrix();
         float[][] a_values = a.matrix, b_values = b.matrix;
-        float[][] results_values = new float[a_values.length][a_values[1].length];
-        for (int i = 0; i < a_values.length; i++)
-            for (int j = 0; j < a_values[1].length; j++)
-                results_values[i][j] = a_values[i][j] * b_values[i][j];
-        results.matrix = results_values;
+        int r1 = a_values.length, c1 = b_values.length, c2 = b_values[1].length;
+        float[][] r_values = new float[r1][c2];
+        for (int i = 0; i < r1; i++)
+            for (int j = 0; j < c2; j++) 
+                for (int k = 0; k < c1; k++) 
+                    r_values[i][j] += a_values[i][k] * b_values[k][j];
+        results.matrix = r_values;
         return results;
     }
 

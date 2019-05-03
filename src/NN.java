@@ -152,7 +152,9 @@ public class NN {
         Matrix who = map.get(set);  // weights (w) from hidden (h) to output (o)
 
         // Calculate hidden errors
-        Matrix hidden_errors = Matrix.multiply(output_errors, Matrix.transpose(who));
+        //System.out.println(who);
+        //System.out.println(output_errors);
+        Matrix hidden_errors = Matrix.multiply(who, output_errors);
 
         System.out.println(hidden_errors);
         
