@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         
-        // Dimensions of the patterns (5x5 Grid)
+        // Dimensions of input patterns
         final int patternHeight = 5;
         final int patternWidth = 5;
 
@@ -36,13 +36,13 @@ public class Main {
                 { 1, 1, 1, 1, 1 } };
 
 
-        // New Neural Network; input size of pattern L x W.
+        // New Neural Network; input size of flattened pattern.
         NN NeuralNetwork = new NN(patternHeight * patternWidth);
         
         // Train each pattern
-        NeuralNetwork.Train(4, input_pattern0, new float[] { 0, 0 });
-        NeuralNetwork.Train(4, input_pattern1, new float[] { 1, 0 });
-        NeuralNetwork.Train(4, input_pattern2, new float[] { 0, 1 });
+        NeuralNetwork.Train(input_pattern0, new float[] { 1, 0, 0 });
+        NeuralNetwork.Train(input_pattern1, new float[] { 0, 1, 0 });
+        NeuralNetwork.Train(input_pattern2, new float[] { 0, 0, 1 });
 
     }
     

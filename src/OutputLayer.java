@@ -5,10 +5,8 @@
 
 public class OutputLayer extends Layer {
 
-    public OutputLayer() {
-        // EDIT THIS CODE
-        // THIS INSINUATES THERE ARE ONLY 2 OUTPUT NEURONS
-        super(2);
+    public OutputLayer(int neurons) {
+        super(neurons);
     }
 
 }

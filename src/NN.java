@@ -62,14 +62,14 @@ public class NN {
      * @param hiddenLayers  number of hidden layers used to train the network
      * @param p input pattern that will be trained by the network
      */
-    public void Train(int hiddenLayers, float[][] p, float[] targets) {
+    public void Train(float[][] input, float[] targets) {
 
         /* Network with L x W input neurons */
-        int s = p.length *  p[1].length;
+        int s = input.length *  input[1].length;
         NN network = new NN(s);
 
         /* Number of Hidden Layers. */
-        final int HIDDEN_LAYERS = hiddenLayers;
+        final int HIDDEN_LAYERS = 2;
 
         /* Maps pairs of layers to a weight matrix. */
         HashMap<HashSet<Layer>, Matrix> map = new HashMap<>();
@@ -79,7 +79,7 @@ public class NN {
             network.append(new HiddenLayer(3)); // 3 neurons in each layer
         
         /* Add Output Layer. */
-        network.append(new OutputLayer());
+        network.append(new OutputLayer(targets.length));
 
         /* Give each pair of parallel Layers a matrix. */
         for (int i = 0; i < network.nn.size()-1; i++) {
@@ -93,13 +93,13 @@ public class NN {
         }
 
         /* Input Matrix for unique pattern */
-        network.setPattern(p);
+        network.setPattern(input);
         float[][] MY_PATTERN = network.importPattern();
 
-        Matrix pattern = new Matrix(); // Create new Matrix for pattern
-        pattern.matrix = MY_PATTERN; // Set matrix to new pattern
+        Matrix pattern = new Matrix();  // Create new Matrix for input.
+        pattern.matrix = MY_PATTERN;    // Set matrix to input pattern.
 
-        pattern.Flatten(); // Flatten Matrix to 1D
+        pattern.Flatten();              // Flatten Matrix to single dimension.
         network.input.vector = pattern; // Set pattern to input layer.
 
         /* Copy pattern to 1D input layer. */
@@ -128,6 +128,7 @@ public class NN {
         // Print ouput neuron activations for this training example
         System.out.println("Output neuron 1: " + network.nn.get(network.size-1).activations[0]);
         System.out.println("Output neuron 2: " + network.nn.get(network.size-1).activations[1]);
+        System.out.println("Output neuron 3: " + network.nn.get(network.size-1).activations[2]);
         System.out.println();
 
             /** 
@@ -147,17 +148,45 @@ public class NN {
         Matrix output_errors = Matrix.subtract(target_vector, output_vector);
 
         // Get weight matrix from these layers.
-        HashSet<Layer> set = new HashSet<>(Arrays.asList(
+        HashSet<Layer> t = new HashSet<>(Arrays.asList(
                             network.nn.get(0), network.nn.get(1)));
-        Matrix who = map.get(set);  // weights (w) from hidden (h) to output (o)
+        Matrix who = map.get(t);  // weights (w) from hidden (h) to output (o)
 
         // Calculate hidden errors
-        //System.out.println(who);
-        //System.out.println(output_errors);
         Matrix hidden_errors = Matrix.multiply(who, output_errors);
 
-        System.out.println(hidden_errors);
-        
+        // Map to associate each weight matrix with an error matrix.
+        HashMap<Layer, Matrix> mapOfErrors = new HashMap<>();
+
+        // Put last hidden layer error into map.
+        mapOfErrors.put(network.nn.get(0), output_errors);
+
+        /**
+         * In order to calculate all errors for each layer in the network, we
+         * must loop through the layers, store previous errors, and recurse
+         */
+        for (int i = 1; i < network.nn.size()-1; i++) {
+
+            // Get weight matrix of current layer and its successor.
+            HashSet<Layer> set = new HashSet<>();
+            Layer layer_i, layer_j;
+            layer_i = network.nn.get(i);
+            layer_j = network.nn.get(i + 1);
+            set.add(layer_i);
+            set.add(layer_j);
+
+            // Get the weight matrix and error of current layer.
+            Matrix m = map.get(set);
+            Matrix e = mapOfErrors.get(network.nn.get(i));
+
+            // Calculate new error for next layer
+            Matrix z = Matrix.multiply(m, e);
+
+            // Store layer with its error.
+            mapOfErrors.put(network.nn.get(i+1), z);
+        }
+
+
         /* Go through each set of parallel layers and update matrices. 
         for (int k = 0; k < network.nn.size()-1; k++) {
 
