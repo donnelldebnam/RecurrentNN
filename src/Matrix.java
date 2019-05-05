@@ -7,9 +7,7 @@ import java.util.Random;
 
 public class Matrix {
 
-    /*
-     * 2-D Array backend implementation of our neural network weight matrix.
-     */
+    // Actual 2D matrix of the object.
     public float[][] matrix;
 
     public Matrix() {}

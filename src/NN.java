@@ -69,14 +69,14 @@ public class NN {
         NN network = new NN(s);
 
         /* Number of Hidden Layers. */
-        final int HIDDEN_LAYERS = 100;
+        final int HIDDEN_LAYERS = 24;
 
         /* Maps pairs of layers to a weight matrix. */
         HashMap<HashSet<Layer>, Matrix> map = new HashMap<>();
 
         /* Add n new HiddenLayers to the Network. */
         for (int i = 0; i < HIDDEN_LAYERS; i++) 
-            network.append(new HiddenLayer(3)); // 3 neurons in each layer
+            network.append(new HiddenLayer(3));
         
         /* Add Output Layer. */
         network.append(new OutputLayer(targets.length));
